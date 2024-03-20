@@ -1,0 +1,641 @@
+Epitech 2023
+Category: Communication protocol
+
+                         My_teams Protocol Document
+
+Abstract
+    This document provide a complete documentation for the communication
+    between the server and client on the Epitech project's my_teams.
+
+    The protocol is based on the TCP/IP protocol.
+
+Status of This Memo
+    This document is a working draft.
+
+    This document is a product of the Epitech project's my_teams.
+
+Copyright Notice
+    This document is a free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This document is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+Table of Contents
+    1. Introduction
+    2. Requirements Language
+    3. Syntax
+    4. Client Behavior
+    5. Server Behavior
+    6. General Information
+    7. Commands
+        7.1. Non Contextuel Commands
+        7.2. Contextuel Commands
+    8. Return
+
+1. Introduction
+    This document provide a complete documentation for the communication
+    between the server and client on the Epitech project's my_teams.
+
+    The protocol is based on the TCP/IP protocol.
+
+2. Requirements Language
+    The language used in this document is English.
+
+3. Syntax
+    The syntax used in this document is the following:
+
+    -   <CRLF> : Carriage Return Line Feed ("\r\n")
+    -   <SP> : Space (" ")
+    -   [...] : mandatory argument
+    -   ?[...] : optional argument
+
+4. Client Behavior
+    When the client send a command to the server it expect a response from
+    the server.
+
+    The command is composed of the command name and the arguments.
+
+    The command name is composed of a string of alphanumeric characters
+    (a-z, A-Z, 0-9) and the underscore character (_).
+
+    The arguments are composed of a string of alphanumeric characters
+    (a-z, A-Z, 0-9) and the underscore character (_).
+
+    The arguments are separated by a space character and include between
+    double quotes.
+
+    The command is terminated by a carriage return line feed (<CRLF>).
+
+    The client can send a command to the server at any time.
+
+    The client can received a response from the server at any time if
+    the client is connected.
+
+5. Server Behavior
+    When the server receive a command from the client it return a response
+    to the client.
+
+    The server can send a event to the client at any time.
+
+    The server can received a command from the client at any time.
+
+6. General Information
+    MAX_NAME_LENGTH 32
+    MAX_DESCRIPTION_LENGTH 255
+    MAX_BODY_LENGTH 512
+
+7. Commands
+    This section describe the commands that can be used by the client
+
+    7.1. Non Contextuel Commands
+        HELP
+            Description:
+                Display the help of the server.
+
+            Actions:
+                Display the help of the server to the client.
+
+            Syntax:
+                /help <CRLF>
+
+            Return:
+                601 List the help
+                400 Invalid Syntax
+
+            Return info:
+                NONE
+
+        LOGIN
+            Description:
+                Login to the server with a username.
+
+            Action:
+                Send a "client_event_logged_in" event to all the clients of
+                the server
+
+            Syntax:
+                /login <SP> [username] <CRLF>
+
+            Return code:
+                600 Connection successful
+                400 Invalid Syntax
+
+            Return info:
+                user_uuid
+                username
+
+        LOGOUT
+            Description:
+                Logout from the server.
+
+            Action:
+                Send a "client_event_logged_out" event to all the clients of
+                the server
+
+            Syntax:
+                /logout <CRLF>
+
+            Return:
+                602 Disconnection successful
+                400 Not logged
+                400 Invalid Syntax
+
+            Return info:
+                user_uuid
+                username
+
+        USERS
+            Description:
+                Display the list of users.
+
+            Action:
+                Display the list of users returned by the server
+                to the client.
+
+            Syntax:
+                /users <CRLF>
+
+            Return:
+                603 List of users
+                400 Not logged
+                400 Invalid Syntax
+
+            Return info:
+                user_uuid
+                username
+                Status
+
+        USER
+            Description:
+                Display the information of a user.
+
+            Action:
+                Display the information of a user returned by the server
+                to the client.
+
+            Syntax:
+                /user <SP> [user_uuid] <CRLF>
+
+            Return:
+                604 User information
+                400 User not found
+                400 Not logged
+                400 Invalid Syntax
+
+            Return info:
+                user_uuid
+                username
+                Status
+
+        SEND
+            Description:
+                Send a message to a user.
+
+            Action:
+                Send a "client_event_private_message_received" event to the
+                destination user.
+
+            Syntax:
+                /send <SP> [user_uuid] <SP> [message_body] <CRLF>
+
+            Return:
+                605 Message sent
+                400 User not found
+                400 Not logged
+                400 Invalid Syntax
+
+            Return info:
+                user_uuid
+                message_body
+
+        MESSAGES
+            Description:
+                Display the list of messages from a user.
+
+            Action:
+                Display the list of messages from a user returned by the
+                server to the client.
+
+            Syntax:
+                /messages <SP> [user_uuid] <CRLF>
+
+            Return:
+                606 List of messages
+                400 User not found
+                400 Not logged
+                400 Invalid Syntax
+
+            Return info:
+                NONE
+
+        SUBSCRIBE
+            Description:
+                Subscribe to the events of a team and its sub directories.
+
+            Action:
+                Enable reception of all the events of the team.
+                Send a "client_event_team_created" event to all the clients
+                of the server.
+
+            Syntax:
+                /subscribe <SP> [team_uuid] <CRLF>
+
+            Return:
+                607 Subscribed to team
+                400 Invalid Syntax
+                400 Not logged
+                400 Already subscribed
+                400 Unknow team
+
+            Return info:
+                team_uuid
+                team_name
+                team_description
+
+        SUBSCRIBED
+            Description:
+                Display all subscribed teams or display all subscribed
+                users of a team.
+
+            Action:
+                Display the list of subscribed teams or display all subscribed
+                users of a team returned by the server to the client.
+
+            Syntax:
+                /subscribed ?[team_uuid] <CRLF>
+
+            Return:
+                608 List of subscribed teams
+                608 List of subscribed users
+                400 Invalid Syntax
+                400 Not logged
+                400 Unknow team
+
+            Return info:
+                NONE
+
+        UNSUBSCRIBE
+            Description:
+                Unsubscribe to the events of a team and its sub directories.
+
+            Action:
+                Disable reception of all the events of the team.
+
+            Syntax:
+                /unsubscribe <SP> [team_uuid] <CRLF>
+
+            Return:
+                609 Unsubscribed to team
+                400 Invalid Syntax
+                400 Not logged / Not subscribed
+                400 Unknow team
+
+            Return info:
+                NONE
+
+        USE
+            Description:
+                Use a team or a channel or a thread.
+
+            Action:
+                Change the context of the client to the team or channel or a thread.
+
+            Syntax:
+                /use <SP> ?[team_uuid]
+                <SP> ?[channel_uuid]
+                <SP> ?[thread_uuid] <CRLF>
+
+            Return:
+                610 Context changed
+                400 Invalid Syntax
+                400 Not logged
+                400 Team not found
+                400 Channel not found
+                400 Thread not found
+
+            Return info:
+                NONE
+
+    7.2. Contextuel Commands
+        CREATE
+            Context : none
+                Description:
+                    Create a team.
+
+                Action:
+                    Send a "client_event_team_created" event to all the
+                    clients of the server.
+
+                Syntax:
+                    /create <SP> [team_name] <SP> [description] <CRLF>
+
+                Return:
+                    611 Team created
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    team_uuid
+                    team_name
+                    team_description
+
+            Context : team
+                Description:
+                    Create a channel.
+
+                Action:
+                    Send a "client_event_channel_created" event to all the
+                    clients of the server.
+
+                Syntax:
+                    /create <SP> [channel_name] <SP> [description] <CRLF>
+
+                Return:
+                    611 Team created
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    channel_uuid
+                    channel_name
+                    channel_description
+
+            Context : channel
+                Description:
+                    Create a thread.
+
+                Action:
+                    Send a "client_event_thread_created" event to all the
+                    clients of the server.
+
+                Syntax:
+                    /create <SP> [thread_title] <SP> [thread_message] <CRLF>
+                    <SP> [thread_message] <CRLF>
+
+                Return:
+                    611 Team created
+                    400 Invalid Syntax
+                    400 Not logged / Not subscribed
+
+                Return info:
+                    thread_uuid
+                    user_uuid
+                    thread_timestamp
+                    thread_title
+                    thread_body
+
+            Context : thread
+                Description:
+                    Create a reply.
+
+                Action:
+                    Create a new reply to the context
+
+                Syntax:
+                    /create <SP> [comment_body] <CRLF>
+
+                Return:
+                    611 Team created
+                    400 Invalid Syntax
+                    400 Not logged / Not subscribed
+
+                Return info:
+                    NONE
+
+        LIST
+            Context : none
+                Description:
+                    Display the list of teams.
+
+                Action:
+                    Display the list of teams returned by the server
+                    to the client.
+
+                Syntax:
+                    /list <CRLF>
+
+                Return:
+                    612 List of teams
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    NONE
+
+            Context : team
+                Description:
+                    Display the list of channels.
+
+                Action:
+                    Display the list of channels returned by the server
+                    to the client.
+
+                Syntax:
+                    /list <CRLF>
+
+                Return:
+                    612 List of channels
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    NONE
+
+            Context : channel
+                Description:
+                    Display the list of threads.
+
+                Action:
+                    Display the list of threads returned by the server
+                    to the client.
+
+                Syntax:
+                    /list <CRLF>
+
+                Return:
+                    612 List of threads
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    NONE
+
+            Context : thread
+                Description:
+                    Display the list of replies.
+
+                Action:
+                    Display the list of replies returned by the server
+                    to the client.
+
+                Syntax:
+                    /list <CRLF>
+
+                Return:
+                    612 List of replies
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    NONE
+
+        INFO
+            Context : none
+                Description:
+                    Display all the connected users.
+
+                Action:
+                    Display a list of connected users returned by the server
+
+                Syntax:
+                    /info <CRLF>
+
+                Return:
+                    613 List of users
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    NONE
+
+            Context : team
+                Description:
+                    Display the team information.
+
+                Action:
+                    Display the information of a team returned by the server
+
+                Syntax:
+                    /info <CRLF>
+
+                Return:
+                    613 Team information
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    NONE
+
+            Context : channel
+                Description:
+                    Display the information of a channel.
+
+                Action:
+                    Display the information of a channel returned by the server
+
+                Syntax:
+                    /info <CRLF>
+
+                Return:
+                    613 Channel information
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    NONE
+
+            Context : thread
+                Description:
+                    Display the information of a thread.
+
+                Action:
+                    Display the information of a thread returned by the server
+
+                Syntax:
+                    /info <CRLF>
+
+                Return:
+                    613 Thread information
+                    400 Invalid Syntax
+                    400 Not logged
+
+                Return info:
+                    NONE
+
+8. Return value
+    600     Connection successful
+    601     List of help
+    602     Disconnection successful
+    605     Message successfully sent
+    607     Subscribed to a team
+    609     Unsubscribed to a team
+    610     Context changed
+
+    611     Team created
+    611     Channel created
+    611     Thread created
+    611     Reply created
+
+    612     List of teams
+    612     List of channels
+    612     List of threads
+    612     List of replies
+    612     List of users
+    612     Lists all messages
+
+    613     Team information
+    613     Channel information
+    613     Thread information
+    613     Reply information
+    613     User information
+
+    100     Event User logged in
+    101     Event User want help
+    102     Event User logged out
+    103     Event User see list of users
+    104     Event User see info of a user
+    105     Event User received a message
+    106     Event User see list of messages
+    107     Event User subscribed to a team
+    108     Event User see subscribed teams / users
+    109     Event User unsubscribed to a team
+    110     Event User changed context
+    111     Event User created a team
+    111     Event User created a channel
+    111     Event User created a thread
+    111     Event User created a reply
+    112     Event User see list of teams
+    112     Event User see list of channels
+    112     Event User see list of threads
+    112     Event User see list of replies
+    113     Event User see info of a team
+    113     Event User see info of a channel
+    113     Event User see info of a thread
+    113     Event User see info of a reply
+
+    400     Invalid Syntax
+    400     Connection refused
+    400     Not logged
+    400     Command not found
+    400     Already exist
+    400     Unknow team
+    400     Unknow channel
+    400     Unknow thread
+    400     Unknow message / reply
+    400     Unknow user
+
+    700     No error
+    701     Already logged
+    702     Not logged
+    703     Already exist
+    704     Not exist
+
+    000     Context none
+    001     Context team
+    002     Context channel
+    003     Context thread
+
+    500     Internal Server Error
+
+Acknowledgements
+    This document is based on the work of the following people:
+        -   RFC 7322 [https://www.rfc-editor.org/rfc/rfc7322#section-3.1]
+        -   RFC 2119 [https://www.rfc-editor.org/rfc/rfc2119.txt]
+        -   RFC 2616 [https://www.rfc-editor.org/rfc/rfc2616#section-6.1.1] (Status Code and Reason Phrase)
+        -   RFC 7231 [https://www.rfc-editor.org/rfc/rfc7231#section-6] (Response Status Codes)
+        -   RFC 7230 [https://www.rfc-editor.org/rfc/rfc7230#section-3.1.2] (Status Code and Reason Phrase)

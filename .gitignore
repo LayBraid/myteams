@@ -1,0 +1,12 @@
+*.o
+*.out
+*.gc*
+
+.idea
+
+Dockerfile
+*.sh
+
+real_lib
+
+*.so
